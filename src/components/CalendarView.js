@@ -3,17 +3,16 @@ import { useState, useEffect } from 'react';
 import { API_URL } from '../configs/config'
 import dayjs from 'dayjs';
 import WorkTimeInput from './WorkTimeInput';
+import WorkTable from './WorkTable';
 
 const CalendarView = () => {
 
-    const [form] = Form.useForm();
 
     const [data, setData] = useState([]);
     const [selectedYM, setSelectedYM] = useState(dayjs().format('YYYY-MM'))
-    const [selectedYMD, setSelectYMD] = useState(dayjs())
+    const [selectedYMD, setSelectedYMD] = useState(dayjs().format('YYYY-MM-DD'))
     const [isModify, setIsModify] = useState(false)
     const [open, setOpen] = useState(false);
-    const [confirmLoading, setConfirmLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,14 +28,22 @@ const CalendarView = () => {
             }
         };
         fetchData();
-    }, [selectedYM]);
+    }, [selectedYM, open]);
 
 
     const cellRender = (value) => {
         const formatValue = value.format('YYYY-MM-DD');
         const currentDateData = data.find(item => item.date === formatValue);
         if (currentDateData) {
-            return <Badge status='success' text={currentDateData.data} />
+            return (
+                <ul style={{ listStyleType: "none", margin: "0", padding: "0" }}>
+                    {currentDateData.data.map((item) => (
+                        <li key={item.seq}>
+                            <Badge status={item.type} text={item.work_content} />
+                        </li>
+                    ))}
+                </ul>
+            );
         }
         return <div></div>;
     };
@@ -47,7 +54,6 @@ const CalendarView = () => {
 
 
     const handleCancel = () => {
-        form.resetFields();
         setOpen(false);
     };
 
@@ -66,7 +72,7 @@ const CalendarView = () => {
     }
 
     const onSelect = (value) => {
-        setSelectYMD(value)
+        setSelectedYMD(value.format('YYYY-MM-DD'))
         setSelectedYM(value.format('YYYY-MM'))
         if (isModify) {
             onSelectIfModify()
@@ -79,7 +85,7 @@ const CalendarView = () => {
         <>
             <Switch checkedChildren='Modify' unCheckedChildren='View' onChange={onChange} />
             <Calendar cellRender={cellRender} onSelect={onSelect} />
-            <Modal
+            {/* <Modal
                 title="Input you work time"
                 open={open}
                 confirmLoading={confirmLoading}
@@ -87,6 +93,15 @@ const CalendarView = () => {
                 footer={null}
             >
                 <WorkTimeInput form={form} date={selectedYMD} setOpen={setOpen} setConfirmLoading={setConfirmLoading} />
+            </Modal> */}
+            <Modal
+                title="Check you work time"
+                width={1000}
+                open={open}
+                onCancel={handleCancel}
+                footer={null}
+            >
+                <WorkTable date={selectedYMD} />
             </Modal>
         </>
     );

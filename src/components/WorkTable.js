@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Table, Modal, Form, Button, message } from 'antd';
 import WorkTimeInput from './WorkTimeInput';
 import { API_URL } from '../configs/config'
-import useFetch from '../utils/useFetch';
+import { useSelector } from 'react-redux';
 
 const WorkTable = ({ date }) => {
-
+    const { user } = useSelector((state) => state);
     const [form] = Form.useForm();
 
     const [open, setOpen] = useState(false);
@@ -13,12 +13,10 @@ const WorkTable = ({ date }) => {
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [workData, setWorkData] = useState(null)
 
-    useFetch(`${API_URL}/work_data/day/${date}`, setWorkData);
-
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch(`${API_URL}/work_data/day/${date}`);
+                const res = await fetch(`${API_URL}/work_data/day/${user.id}/${date}`);
                 if (!res.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -28,8 +26,10 @@ const WorkTable = ({ date }) => {
                 message.error(`Fetch error: ${error.message}`);
             }
         };
-        fetchData();
-    }, [open]);
+        if (user.id) {
+            fetchData();
+        }
+    }, [user.id, date, open]);
 
     const columns = [
         {

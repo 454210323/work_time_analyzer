@@ -28,6 +28,11 @@ const Dashboard = () => {
                     <Menu.Item key="2" icon={<CalendarOutlined />}>
                         <Link to="/dashboard/calendar">Calendar</Link>
                     </Menu.Item>
+                    {user.id === user.team_manager_id &&
+                        <Menu.Item key="3" icon={<DesktopOutlined />}>
+                            <Link to="/dashboard/team">My Team</Link>
+                        </Menu.Item>
+                    }
                     <Menu.SubMenu key="sub1" title="User" icon={<UserOutlined />}>
                         <Menu.Item key="sub1-1">
                             <Link to="/dashboard/user1">User1</Link>
@@ -39,6 +44,7 @@ const Dashboard = () => {
                             <Link to="/dashboard/user3">User3</Link>
                         </Menu.Item>
                     </Menu.SubMenu>
+
                 </Menu>
             </Sider>
             <Layout>
@@ -51,7 +57,7 @@ const Dashboard = () => {
                     }}
                 >
                     <UserInfo user={user} />
-                    <div style={{ marginLeft: '10px' }}>current user: {user.name}</div>
+
                 </Header>
                 <Content
                     style={{

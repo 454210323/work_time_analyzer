@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Tooltip, Button, message } from 'antd';
-import { API_URL } from '../configs/config'
-import useFetch from '../utils/useFetch';
-import { useSelector } from 'react-redux';
-
+import React, { useState, useEffect } from "react";
+import { Form, Input, Select, Tooltip, Button, message } from "antd";
+import { API_URL } from "../configs/config";
+import useFetch from "../utils/useFetch";
+import { useSelector } from "react-redux";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const WorkTimeInput = ({ form, selectedDate, data, setOpen, setConfirmLoading }) => {
-
+const WorkTimeInput = ({
+  form,
+  selectedDate,
+  data,
+  setOpen,
+  setConfirmLoading,
+}) => {
   const { user } = useSelector((state) => state);
 
   const [majorCategory, setMajorCategory] = useState([]);
@@ -20,10 +24,18 @@ const WorkTimeInput = ({ form, selectedDate, data, setOpen, setConfirmLoading })
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
   const [selectedSubSubCategory, setSelectedSubSubCategory] = useState(null);
 
-  const { loading: majorLoading } = useFetch(`${API_URL}/category?parent_category_id=`, setMajorCategory);
-  const { loading: subLoading } = useFetch(`${API_URL}/category?parent_category_id=${selectedMajorCategory}`, setSubCategory);
-  const { loading: subSubLoading } = useFetch(`${API_URL}/category?parent_category_id=${selectedSubCategory}`, setSubSubCategory);
-
+  const { loading: majorLoading } = useFetch(
+    `${API_URL}/category?parent_category_id=`,
+    setMajorCategory
+  );
+  const { loading: subLoading } = useFetch(
+    `${API_URL}/category?parent_category_id=${selectedMajorCategory}`,
+    setSubCategory
+  );
+  const { loading: subSubLoading } = useFetch(
+    `${API_URL}/category?parent_category_id=${selectedSubCategory}`,
+    setSubSubCategory
+  );
 
   useEffect(() => {
     if (data) {
@@ -33,7 +45,7 @@ const WorkTimeInput = ({ form, selectedDate, data, setOpen, setConfirmLoading })
         sub_category_id: data.sub_category.id,
         sub_sub_category_id: data.sub_sub_category.id,
         work_time: data.work_time,
-        work_content: data.work_content
+        work_content: data.work_content,
       });
       setSelectedMajorCategory(data.major_category.id);
       setSelectedSubCategory(data.sub_category.id);
@@ -42,7 +54,6 @@ const WorkTimeInput = ({ form, selectedDate, data, setOpen, setConfirmLoading })
       form.resetFields();
     }
   }, [data, form]);
-
 
   const onFinish = async (values) => {
     setConfirmLoading(true);
@@ -54,12 +65,12 @@ const WorkTimeInput = ({ form, selectedDate, data, setOpen, setConfirmLoading })
     values.sub_sub_category_id = selectedSubSubCategory;
 
     const url = `${API_URL}/work_data`;
-    const method = data ? 'PUT' : 'POST';
+    const method = data ? "PUT" : "POST";
 
     const response = await fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(values),
     });
@@ -85,49 +96,82 @@ const WorkTimeInput = ({ form, selectedDate, data, setOpen, setConfirmLoading })
         </Tooltip>
       </Form.Item>
 
-      <Form.Item name="major_category_id" label="" rules={[{ required: true, message: 'Please select a major category!' }]}>
-        <Select placeholder="Major Category" onChange={setSelectedMajorCategory}>
-          {majorCategory.map(category => (
-            <Option key={category.id} value={category.id}>{category.category_name}</Option>
+      <Form.Item
+        name="major_category_id"
+        label=""
+        rules={[{ required: true, message: "Please select a major category!" }]}
+      >
+        <Select
+          placeholder="Major Category"
+          onChange={setSelectedMajorCategory}
+        >
+          {majorCategory.map((category) => (
+            <Option key={category.id} value={category.id}>
+              {category.category_name}
+            </Option>
           ))}
         </Select>
       </Form.Item>
 
-      <Form.Item name="sub_category_id" label="" rules={[{ required: true, message: 'Please select a sub category!' }]}>
+      <Form.Item
+        name="sub_category_id"
+        label=""
+        rules={[{ required: true, message: "Please select a sub category!" }]}
+      >
         <Select placeholder="Sub Category" onChange={setSelectedSubCategory}>
-          {subCategory.map(category => (
-            <Option key={category.id} value={category.id}>{category.category_name}</Option>
+          {subCategory.map((category) => (
+            <Option key={category.id} value={category.id}>
+              {category.category_name}
+            </Option>
           ))}
         </Select>
       </Form.Item>
 
-      <Form.Item name="sub_sub_category_id" label="" rules={[{ required: true, message: 'Please select a sub-sub category!' }]}>
-        <Select placeholder="Sub-sub Category" onChange={setSelectedSubSubCategory}>
-          {subSubCategory.map(category => (
-            <Option key={category.id} value={category.id}>{category.category_name}</Option>
+      <Form.Item
+        name="sub_sub_category_id"
+        label=""
+        rules={[
+          { required: true, message: "Please select a sub-sub category!" },
+        ]}
+      >
+        <Select
+          placeholder="Sub-sub Category"
+          onChange={setSelectedSubSubCategory}
+        >
+          {subSubCategory.map((category) => (
+            <Option key={category.id} value={category.id}>
+              {category.category_name}
+            </Option>
           ))}
         </Select>
       </Form.Item>
-
 
       <Form.Item
         name="work_time"
-        label=''
-        normalize={value => parseFloat(value)}
+        label=""
+        normalize={(value) => parseFloat(value)}
         rules={[
-          { required: true, message: 'Please enter the work time!' },
-          { type: 'number', message: 'Please enter a valid number' },
+          { required: true, message: "Please enter the work time!" },
+          { type: "number", message: "Please enter a valid number" },
         ]}
       >
-        <Input style={{ width: 180, }} placeholder="Time (in hours)" type="number" suffix="H" />
+        <Input
+          style={{ width: 180 }}
+          placeholder="Time (in hours)"
+          type="number"
+          suffix="H"
+        />
       </Form.Item>
 
       <Form.Item
         name="work_content"
-        label=''
+        label=""
         rules={[
-          { required: true, message: 'Please enter the work content!' },
-          { max: 500, message: 'Work content should not exceed 500 characters' },
+          { required: true, message: "Please enter the work content!" },
+          {
+            max: 500,
+            message: "Work content should not exceed 500 characters",
+          },
         ]}
       >
         <TextArea placeholder="Work Content" rows={4} />
@@ -137,13 +181,12 @@ const WorkTimeInput = ({ form, selectedDate, data, setOpen, setConfirmLoading })
         <Button type="primary" htmlType="submit">
           Submit
         </Button>
-        <Button style={{ marginLeft: '10px' }} onClick={handleReset}>
+        <Button style={{ marginLeft: "10px" }} onClick={handleReset}>
           Reset
         </Button>
       </Form.Item>
     </Form>
   );
-
 };
 
 export default WorkTimeInput;

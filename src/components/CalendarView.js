@@ -2,11 +2,11 @@ import { Calendar, message, Badge, Switch, Modal, Form } from 'antd';
 import { useState, useEffect } from 'react';
 import { API_URL } from '../configs/config'
 import dayjs from 'dayjs';
-import WorkTimeInput from './WorkTimeInput';
+import { useSelector } from 'react-redux';
 import WorkTable from './WorkTable';
 
 const CalendarView = () => {
-
+    const { user } = useSelector((state) => state);
 
     const [data, setData] = useState([]);
     const [selectedYM, setSelectedYM] = useState(dayjs().format('YYYY-MM'))
@@ -17,7 +17,7 @@ const CalendarView = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch(`${API_URL}/work_data/month/${selectedYM}`);
+                const res = await fetch(`${API_URL}/work_data/month/${user.id}/${selectedYM}`);
                 if (!res.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -28,7 +28,7 @@ const CalendarView = () => {
             }
         };
         fetchData();
-    }, [selectedYM, open]);
+    }, [user.id, selectedYM, open]);
 
 
     const cellRender = (value) => {
@@ -65,7 +65,10 @@ const CalendarView = () => {
         const formatValue = value.format('YYYY-MM-DD');
         const currentDateData = data.find(item => item.date === formatValue);
         if (currentDateData) {
-            message.success(`Data on ${formatValue}: ${currentDateData.data}`);
+            const sumWorkTime = currentDateData.data.reduce((accumulator, currentItem) => {
+                return accumulator + currentItem.work_time;
+            }, 0);
+            message.success(`Data on ${formatValue}: Total work ${sumWorkTime} h`);
         } else {
             message.info(`No data on ${formatValue}`);
         }

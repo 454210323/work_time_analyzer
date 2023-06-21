@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Select, Tooltip, Button, message } from "antd";
+import { Form, Input, Select, Tooltip, Button } from "antd";
 import { API_URL } from "../configs/config";
 import useFetch from "../utils/useFetch";
 import { useSelector } from "react-redux";
@@ -152,7 +152,7 @@ const WorkTimeInput = ({
         normalize={(value) => parseFloat(value)}
         rules={[
           { required: true, message: "Please enter the work time!" },
-          { type: "number", message: "Please enter a valid number" },
+          { type: "number",min:0,max:24, message: "Please enter a 0~24 number" },
         ]}
       >
         <Input

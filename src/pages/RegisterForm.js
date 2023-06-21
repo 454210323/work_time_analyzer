@@ -1,73 +1,27 @@
 import React from "react";
 import {
-  AutoComplete,
   Button,
-  Cascader,
   Checkbox,
-  Col,
   Form,
   Input,
-  InputNumber,
-  Row,
   Select,
   Card,
+  Typography,
+  message
 } from "antd";
 import { useState } from "react";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../configs/config";
-
+import useFetch from "../utils/useFetch";
+const { Title } = Typography;
 const { Option } = Select;
-const residences = [
-  {
-    value: "zhejiang",
-    label: "Zhejiang",
-    children: [
-      {
-        value: "hangzhou",
-        label: "Hangzhou",
-        children: [
-          {
-            value: "xihu",
-            label: "West Lake",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "jiangsu",
-    label: "Jiangsu",
-    children: [
-      {
-        value: "nanjing",
-        label: "Nanjing",
-        children: [
-          {
-            value: "zhonghuamen",
-            label: "Zhong Hua Men",
-          },
-        ],
-      },
-    ],
-  },
-];
 const formItemLayout = {
   labelCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 8,
-    },
+    span: 8,
   },
   wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 16,
-    },
+    span: 16,
   },
 };
 const tailFormItemLayout = {
@@ -83,81 +37,58 @@ const tailFormItemLayout = {
   },
 };
 const RegisterForm = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+  const [teams, setTeams] = useState([])
+
+  useFetch(`${API_URL}/team`, setTeams)
+
+  const register = async (values) => {
+    const response = await fetch(`${API_URL}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const result = await response.json();
+    return result;
   };
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    </Form.Item>
-  );
-  const suffixSelector = (
-    <Form.Item name="suffix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="USD">$</Option>
-        <Option value="CNY">¥</Option>
-      </Select>
-    </Form.Item>
-  );
-  const [autoCompleteResult, setAutoCompleteResult] = useState([]);
-  const onWebsiteChange = (value) => {
-    if (!value) {
-      setAutoCompleteResult([]);
-    } else {
-      setAutoCompleteResult(
-        [".com", ".org", ".net"].map((domain) => `${value}${domain}`)
-      );
+  const onFinish = async (values) => {
+    try {
+      const result = await register(values);
+      message.success("Login Successful!");
+      navigate("/login");
+    } catch (error) {
+      message.error("Regist Failed, Please Try Again!");
     }
   };
-  const websiteOptions = autoCompleteResult.map((website) => ({
-    label: website,
-    value: website,
-  }));
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        width: "100vw",
-      }}
-    >
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh",
+      width: "100vw",
+    }}>
       <Card
         style={{
-          width: "1000px",
+          width: "500px",
           boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
           borderRadius: "5px",
-          display: "flex",
           flexDirection: "column",
           alignItems: "center",
         }}
       >
+        <Title level={3}>Register</Title>
         <Form
           {...formItemLayout}
           form={form}
           name="register"
           onFinish={onFinish}
-          initialValues={{
-            residence: ["zhejiang", "hangzhou", "xihu"],
-            prefix: "86",
-          }}
-          style={{
-            maxWidth: 600,
-          }}
-          scrollToFirstError
         >
           <Form.Item
             name="id"
@@ -215,129 +146,23 @@ const RegisterForm = () => {
           >
             <Input />
           </Form.Item>
-
           <Form.Item
-            name="residence"
-            label="Habitual Residence"
-            rules={[
-              {
-                type: "array",
-                required: true,
-                message: "Please select your habitual residence!",
-              },
-            ]}
-          >
-            <Cascader options={residences} />
-          </Form.Item>
-
-          <Form.Item
-            name="phone"
-            label="Phone Number"
+            name="team_id"
+            label="Team"
             rules={[
               {
                 required: true,
-                message: "Please input your phone number!",
+                message: "Please select team!",
               },
             ]}
           >
-            <Input
-              addonBefore={prefixSelector}
-              style={{
-                width: "100%",
-              }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="donation"
-            label="Donation"
-            rules={[
-              {
-                required: true,
-                message: "Please input donation amount!",
-              },
-            ]}
-          >
-            <InputNumber
-              addonAfter={suffixSelector}
-              style={{
-                width: "100%",
-              }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="website"
-            label="Website"
-            rules={[
-              {
-                required: true,
-                message: "Please input website!",
-              },
-            ]}
-          >
-            <AutoComplete
-              options={websiteOptions}
-              onChange={onWebsiteChange}
-              placeholder="website"
-            >
-              <Input />
-            </AutoComplete>
-          </Form.Item>
-
-          <Form.Item
-            name="intro"
-            label="Intro"
-            rules={[
-              {
-                required: true,
-                message: "Please input Intro",
-              },
-            ]}
-          >
-            <Input.TextArea showCount maxLength={100} />
-          </Form.Item>
-
-          <Form.Item
-            name="gender"
-            label="Gender"
-            rules={[
-              {
-                required: true,
-                message: "Please select gender!",
-              },
-            ]}
-          >
-            <Select placeholder="select your gender">
-              <Option value="male">Male</Option>
-              <Option value="female">Female</Option>
-              <Option value="other">Other</Option>
+            <Select placeholder="select your team">
+              {teams.map((team) => (
+                <Option key={team.team_id} value={team.team_id}>
+                  {team.team_name}
+                </Option>
+              ))}
             </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="Captcha"
-            extra="We must make sure that your are a human."
-          >
-            <Row gutter={8}>
-              <Col span={12}>
-                <Form.Item
-                  name="captcha"
-                  noStyle
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input the captcha you got!",
-                    },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Button>Get captcha</Button>
-              </Col>
-            </Row>
           </Form.Item>
 
           <Form.Item

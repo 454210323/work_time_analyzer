@@ -55,6 +55,25 @@ const WorkTimeInput = ({
     }
   }, [data, form]);
 
+
+  const handleMajorCategory = (value) => {
+    setSelectedMajorCategory(value)
+    form.setFieldsValue({
+      sub_category_id: null,
+      sub_sub_category_id: null,
+    })
+
+  }
+
+  const handleSubCategory = (value) => {
+    setSelectedSubCategory(value)
+    form.setFieldsValue({
+      sub_sub_category_id: null,
+    })
+  }
+
+
+
   const onFinish = async (values) => {
     setConfirmLoading(true);
     values.user_id = user.id;
@@ -103,7 +122,7 @@ const WorkTimeInput = ({
       >
         <Select
           placeholder="Major Category"
-          onChange={setSelectedMajorCategory}
+          onChange={handleMajorCategory}
         >
           {majorCategory.map((category) => (
             <Option key={category.id} value={category.id}>
@@ -118,7 +137,7 @@ const WorkTimeInput = ({
         label=""
         rules={[{ required: true, message: "Please select a sub category!" }]}
       >
-        <Select placeholder="Sub Category" onChange={setSelectedSubCategory}>
+        <Select placeholder="Sub Category" onChange={handleSubCategory}>
           {subCategory.map((category) => (
             <Option key={category.id} value={category.id}>
               {category.category_name}
@@ -152,7 +171,7 @@ const WorkTimeInput = ({
         normalize={(value) => parseFloat(value)}
         rules={[
           { required: true, message: "Please enter the work time!" },
-          { type: "number",min:0,max:24, message: "Please enter a 0~24 number" },
+          { type: "number", min: 0, max: 24, message: "Please enter a 0~24 number" },
         ]}
       >
         <Input

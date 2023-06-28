@@ -1,5 +1,5 @@
-import { Avatar, Popover, Descriptions, Typography, Space } from 'antd';
-import { colorFromId } from '../utils/utils';
+import { Popover, Descriptions, Typography, Space } from 'antd';
+import AvatarWithName from "./AvatarWithName";
 
 const { Text } = Typography;
 
@@ -17,11 +17,7 @@ const UserInfo = ({ user }) => (
                 </>
             }
         >
-            <Avatar style={{
-                verticalAlign: 'middle',
-                background: colorFromId(user.id)
-            }}
-                size="large">{user.name}</Avatar>
+            <AvatarWithName name={user.name} />
         </Popover>
         <Descriptions bordered>
             <Descriptions.Item label="UserName">{user.name}</Descriptions.Item>

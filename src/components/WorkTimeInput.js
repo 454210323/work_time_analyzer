@@ -24,15 +24,12 @@ const WorkTimeInput = ({
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
   const [selectedSubSubCategory, setSelectedSubSubCategory] = useState(null);
 
-  const { loading: majorLoading } = useFetch(
-    `${API_URL}/category?parent_category_id=`,
-    setMajorCategory
-  );
-  const { loading: subLoading } = useFetch(
+  useFetch(`${API_URL}/category?parent_category_id=`, setMajorCategory);
+  useFetch(
     `${API_URL}/category?parent_category_id=${selectedMajorCategory}`,
     setSubCategory
   );
-  const { loading: subSubLoading } = useFetch(
+  useFetch(
     `${API_URL}/category?parent_category_id=${selectedSubCategory}`,
     setSubSubCategory
   );
@@ -53,26 +50,22 @@ const WorkTimeInput = ({
     } else {
       form.resetFields();
     }
-  }, [data, form]);
-
+  }, [data, form, selectedDate]);
 
   const handleMajorCategory = (value) => {
-    setSelectedMajorCategory(value)
+    setSelectedMajorCategory(value);
     form.setFieldsValue({
       sub_category_id: null,
       sub_sub_category_id: null,
-    })
-
-  }
+    });
+  };
 
   const handleSubCategory = (value) => {
-    setSelectedSubCategory(value)
+    setSelectedSubCategory(value);
     form.setFieldsValue({
       sub_sub_category_id: null,
-    })
-  }
-
-
+    });
+  };
 
   const onFinish = async (values) => {
     setConfirmLoading(true);
@@ -100,7 +93,7 @@ const WorkTimeInput = ({
     form.resetFields();
     setOpen(false);
     setConfirmLoading(false);
-    const result = await response.json();
+    // const result = await response.json();
   };
 
   const handleReset = () => {
@@ -120,10 +113,7 @@ const WorkTimeInput = ({
         label=""
         rules={[{ required: true, message: "Please select a major category!" }]}
       >
-        <Select
-          placeholder="Major Category"
-          onChange={handleMajorCategory}
-        >
+        <Select placeholder="Major Category" onChange={handleMajorCategory}>
           {majorCategory.map((category) => (
             <Option key={category.id} value={category.id}>
               {category.category_name}
@@ -171,7 +161,12 @@ const WorkTimeInput = ({
         normalize={(value) => parseFloat(value)}
         rules={[
           { required: true, message: "Please enter the work time!" },
-          { type: "number", min: 0, max: 24, message: "Please enter a 0~24 number" },
+          {
+            type: "number",
+            min: 0,
+            max: 24,
+            message: "Please enter a 0~24 number",
+          },
         ]}
       >
         <Input

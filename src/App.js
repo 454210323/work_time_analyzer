@@ -7,6 +7,7 @@ import RegisterForm from './pages/RegisterForm';
 import Dashboard from './pages/Dashboard';
 import Home from './components/Home';
 import CalendarView from './components/CalendarView';
+import WorkTimeUpload from './components/WorkTimeUpload';
 import Team from './components/Team';
 import User1 from './components/User1';
 import User2 from './components/User2';
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/dashboard/*" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
             <Route path='home' element={<Home />} />
             <Route path="calendar" element={<CalendarView />} />
+            <Route path="upload" element={<WorkTimeUpload />} />
             <Route path='team' element={<Team />} />
             <Route path="user1" element={<User1 />} />
             <Route path="user2" element={<User2 />} />

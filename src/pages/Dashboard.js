@@ -1,4 +1,4 @@
-import { UserOutlined, DesktopOutlined, HomeOutlined, CalendarOutlined } from '@ant-design/icons';
+import { UserOutlined, DesktopOutlined, HomeOutlined, CalendarOutlined, UploadOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import { Link, Outlet } from 'react-router-dom';
 import { useState } from 'react';
@@ -28,8 +28,11 @@ const Dashboard = () => {
                     <Menu.Item key="2" icon={<CalendarOutlined />}>
                         <Link to="/dashboard/calendar">Calendar</Link>
                     </Menu.Item>
+                    <Menu.Item key="3" icon={<UploadOutlined />}>
+                        <Link to="/dashboard/upload">Upload</Link>
+                    </Menu.Item>
                     {user.id === user.team_manager_id &&
-                        <Menu.Item key="3" icon={<DesktopOutlined />}>
+                        <Menu.Item key="4" icon={<DesktopOutlined />}>
                             <Link to="/dashboard/team">My Team</Link>
                         </Menu.Item>
                     }
